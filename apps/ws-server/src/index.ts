@@ -2,6 +2,7 @@ import { WebSocketServer } from "ws";
 import { JWT_SECRET } from "@repo/backend-common/index";
 import jwt, { JwtPayload } from "jsonwebtoken";
 
+
 const wss = new WebSocketServer({ port: 8080 });
 
 wss.on("connection", (socket, request) => {
@@ -29,7 +30,13 @@ wss.on("connection", (socket, request) => {
 
   const { userId } = decoded;
 
+  // create Room for this connect with a slug id
+
+
+
   socket.on("message", (message) => {
+    // iss userId se slug nikalo or iss slug kejitne user hai un sabko chats bhejdo
+
     console.log(`[${userId}]: ${message.toString()}`);
   });
 });
