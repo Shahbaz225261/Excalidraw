@@ -20,7 +20,7 @@ export const SigninSchema = zod.object({
     .email({ message: "Invalid email address" }),
   
   password: zod.string()
-    .min(9, { message: "Password must be at least 9 characters long" })
+    .min(4, { message: "Password must be at least 9 characters long" })
     .max(50, { message: "Password must be at most 50 characters long" })
     .regex(/[A-Z]/, { message: "Password must contain at least one uppercase letter" })
     .regex(/[a-z]/, { message: "Password must contain at least one lowercase letter" })

@@ -18,7 +18,7 @@ router.post("/room",Middleware,async (req,res)=>{
         })
     }
     try{
-        await client.room.create({
+        const user = await client.room.create({
             data:{
                 slug:parsedData.data.name,
                 adminId: userId
@@ -26,12 +26,12 @@ router.post("/room",Middleware,async (req,res)=>{
         })
         
         res.json({
-            roomId:12323
+            roomId:user.id
         })
     }
     catch{
         res.status(400).json({
-            msg:"name already present kidnly choose another name"
+            msg:"slug need to be unique kindly choose another slug"
         })
 
     }
