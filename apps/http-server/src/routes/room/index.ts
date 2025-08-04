@@ -4,7 +4,7 @@ const router:Router = express.Router();
 import {client} from "@repo/src/client"
 import { CreateRoomSchema } from "@repo/common/types";
 
-router.post("/room",Middleware,async (req,res)=>{
+router.post("/CreateRoom",Middleware,async (req,res)=>{
     const parsedData = CreateRoomSchema.safeParse(req.body)
     if(!parsedData.success){
         return res.status(400).json({
@@ -24,7 +24,6 @@ router.post("/room",Middleware,async (req,res)=>{
                 adminId: userId
             }
         })
-        
         res.json({
             roomId:user.id
         })
@@ -33,10 +32,28 @@ router.post("/room",Middleware,async (req,res)=>{
         res.status(400).json({
             msg:"slug need to be unique kindly choose another slug"
         })
-
     }
-
 })
+
+router.get("/chats/:roomId",async (req,res)=>{
+  const roomId = Number(req.params.roomId);
+  const messages = await client.chat.findMany({
+    where:{
+      roomId:roomId
+    },
+    orderBy:{
+      id:"desc"
+    },
+    take:50
+  })
+  res.json({
+    messages
+  })
+})
+
+  
+
+
 
 export default router;
 
