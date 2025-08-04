@@ -7,6 +7,6 @@ import userRouter from "./routes/user"
 app.use("/user",userRouter)
 
 import roomRouter from "./routes/room"
-app.use("/CreateRoom",roomRouter)
+app.use("/room",roomRouter)
 
 app.listen(port);

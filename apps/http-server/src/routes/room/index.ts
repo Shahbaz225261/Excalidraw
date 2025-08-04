@@ -1,8 +1,8 @@
 import express, { Router } from "express"
 import { Middleware } from "../../middleware,";
-const router:Router = express.Router();
 import {client} from "@repo/src/client"
 import { CreateRoomSchema } from "@repo/common/types";
+const router:Router = express.Router();
 
 router.post("/CreateRoom",Middleware,async (req,res)=>{
     const parsedData = CreateRoomSchema.safeParse(req.body)
@@ -51,9 +51,22 @@ router.get("/chats/:roomId",async (req,res)=>{
   })
 })
 
-  
 
-
-
+router.get('/:slug',async (req,res)=>{
+    const slug = req.params.slug;
+    const room = await client.room.findFirst({
+        where:{
+            slug
+        }
+    })
+    if(!room || !room.id){
+        return res.json({
+            msg:"room not found with thta slug"
+        })
+    }
+    return res.json({
+        roomId : room.id
+    })
+})
 export default router;
 
