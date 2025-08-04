@@ -16,7 +16,6 @@ router.post("/signup", async (req, res) => {
       msg:"Incorrect inputs"
     })
   }
-
   try {
     const existingUser = await client.user.findFirst({
       where: { email: parsedData.data?.username },
@@ -78,5 +77,22 @@ router.post("/signin", async (req, res) => {
     return res.status(500).json({ msg: "Internal server error" });
   }
 });
+
+router.get("/chats/:roomId",async (req,res)=>{
+  const roomId = Number(req.params.roomId);
+  const messages = await client.chat.findMany({
+    where:{
+      roomId:roomId
+    },
+    orderBy:{
+      id:"desc"
+    },
+    take:50
+  })
+  res.json({
+    messages
+  })
+})
+
 
 export default router;

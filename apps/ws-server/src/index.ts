@@ -68,26 +68,15 @@ wss.on("connection", (socket, request) => {
 
 if (parsedData.type === "leave_room") {
   const user = users.find((x) => x.ws === socket);
-  console.log("Leave room request:", parsedData.roomId);
   if (!user) {
     console.log("User not found for given socket");
     return;
   }
-  console.log("Rooms before leaving:", user.rooms);
-
   user.rooms = user.rooms.filter((x) => x !== parsedData.roomId);
-
-  console.log("Rooms after leaving:", user.rooms);
-
-  // Optionally send confirmation back to client
-  socket.send(JSON.stringify({ type: "left_room", roomId: parsedData.roomId }));
 }
-
-
     if (parsedData.type === "chat") {
       const roomId = parsedData.roomId;
       const message = parsedData.message;
-
       await client.chat.create({
         data:{
           message,
@@ -95,10 +84,8 @@ if (parsedData.type === "leave_room") {
           userId
         }
       })
-
       users.forEach((e) => {
         if (e.rooms.includes(roomId)) {
-          if (e.ws.readyState === e.ws.OPEN) {
             e.ws.send(
               JSON.stringify({
                 userId,
@@ -107,12 +94,10 @@ if (parsedData.type === "leave_room") {
                 timestamp: new Date().toISOString(),
               })
             );
-          }
         }
       });
     }
   });
-
   socket.on("close", () => {
     const index = users.findIndex((x) => x.ws === socket);
     if (index !== -1) users.splice(index, 1);
