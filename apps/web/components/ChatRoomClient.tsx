@@ -9,7 +9,6 @@ export default function ChatRoomClient({
     messages:{message:string}[],
     id:string
 }){
-
     const {socket,loading} = useSocket();
     const [chats,setChats] = useState(messages);
     const[currentMessage,setCurrentMessage]  = useState("");
@@ -32,7 +31,6 @@ export default function ChatRoomClient({
 
     return <div>
        {chats.map(m =>  <div>{m.message}</div> )}
-
         <input value={currentMessage} onChange={(e)=>{
             setCurrentMessage(e.target.value);
         }} type="text" />
@@ -43,7 +41,7 @@ export default function ChatRoomClient({
                 roomId:id,
                 message:currentMessage
             }))
-        setChats((prevChats) => [...prevChats, { message: currentMessage }]); 
+        setChats((prevChats) => [...prevChats, { message: currentMessage }]);
         setCurrentMessage("");
         }}> Send Message</button>
     </div>

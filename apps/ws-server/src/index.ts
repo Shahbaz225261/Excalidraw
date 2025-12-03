@@ -25,7 +25,7 @@ function checkUser(token: string): string | null {
 }
 
 wss.on("connection", (socket, request) => {
-  const url = request.url;
+  const url = request.url;    // what they r trying to connect to eg ws://localhost:3000?token=123123
   if (!url) return socket.close(1008, "Missing URL");
 
   const queryParams = new URLSearchParams(url.split("?")[1]);
@@ -34,7 +34,7 @@ wss.on("connection", (socket, request) => {
     socket.close(1008, "Missing token");
     return;
   }
-
+  
   const userId = checkUser(token);
   if (!userId) {
     socket.close(1008, "Invalid token");
@@ -98,6 +98,7 @@ if (parsedData.type === "leave_room") {
       });
     }
   });
+
   socket.on("close", () => {
     const index = users.findIndex((x) => x.ws === socket);
     if (index !== -1) users.splice(index, 1);

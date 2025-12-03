@@ -11,6 +11,7 @@ export default function Home() {
   const { register, handleSubmit, formState: { errors } } = useForm<FormData>({
     mode: "onChange",
   });
+  
   const router = useRouter();
 
 

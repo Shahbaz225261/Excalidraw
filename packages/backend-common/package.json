@@ -2,11 +2,14 @@
   "name": "@repo/backend-common",
   "version": "1.0.0",
   "main": "index.js",
+  "exports":{
+    "./index":"./src/index.ts"
+  },
+  "devDependencies": {
+    "@repo/typescript-config": "workspace:*"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "exports": {
-    "./index": "./src/index.ts"
   },
   "keywords": [],
   "author": "",
