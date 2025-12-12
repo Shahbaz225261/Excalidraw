@@ -2,16 +2,21 @@ import { WebSocket, WebSocketServer } from "ws";
 import { JWT_SECRET } from "@repo/backend-common/index";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import { client } from "@repo/src/client";
+import { Prisma } from "../../../packages/db/src/generated/prisma";
+
 
 const wss = new WebSocketServer({ port: 8080 });
 
+
 interface User {
   ws: WebSocket;
-  rooms: string[];
+  rooms: string[]; // it s room name
   userId: string;
 }
 
+
 const users: User[] = [];
+
 
 function checkUser(token: string): string | null {
   try {
@@ -24,9 +29,11 @@ function checkUser(token: string): string | null {
   }
 }
 
+
 wss.on("connection", (socket, request) => {
   const url = request.url;    // what they r trying to connect to eg ws://localhost:3000?token=123123
   if (!url) return socket.close(1008, "Missing URL");
+
 
   const queryParams = new URLSearchParams(url.split("?")[1]);
   const token = queryParams.get("token");
@@ -34,12 +41,13 @@ wss.on("connection", (socket, request) => {
     socket.close(1008, "Missing token");
     return;
   }
-  
+ 
   const userId = checkUser(token);
   if (!userId) {
     socket.close(1008, "Invalid token");
     return;
   }
+
 
   users.push({
     ws: socket,
@@ -47,7 +55,9 @@ wss.on("connection", (socket, request) => {
     userId,
   });
 
+
   socket.on("message", async (data) => {
+    // this data is usually into string hence we need to parse it into json.
     let parsedData;
     try {
       parsedData = JSON.parse(data.toString());
@@ -59,12 +69,27 @@ wss.on("connection", (socket, request) => {
     if (parsedData.type === "joinRoom") {
       const user = users.find((x) => x.ws === socket);
       if (!user) return;
+      // send roomId and type = join room
 
-      // Check access permission to join room
+      // check if this slug even exist or not in our database
+      const r = await client.room.findUnique({
+        where: { id: parsedData.roomId },   
+        select: { id: true },
+      }); // returns null if no room [web:43][web:55]
+
+
+      if (!r) {
+        // optionally send error back to client
+        socket.send(JSON.stringify({ type: "error", message: "roomId not found" }));
+        return;
+      }
+      //includes checks whether the user is already in that room(slug).
+      //If the room is not in the list, it adds parsedData.roomId to user.rooms
       if (!user.rooms.includes(parsedData.roomId)) {
         user.rooms.push(parsedData.roomId);
       }
     }
+
 
 if (parsedData.type === "leave_room") {
   const user = users.find((x) => x.ws === socket);
@@ -74,9 +99,15 @@ if (parsedData.type === "leave_room") {
   }
   user.rooms = user.rooms.filter((x) => x !== parsedData.roomId);
 }
+
+
     if (parsedData.type === "chat") {
+
+    // type chat,slug and message
       const roomId = parsedData.roomId;
       const message = parsedData.message;
+
+     // use queue here
       await client.chat.create({
         data:{
           message,
@@ -84,9 +115,10 @@ if (parsedData.type === "leave_room") {
           userId
         }
       })
-      users.forEach((e) => {
-        if (e.rooms.includes(roomId)) {
-            e.ws.send(
+
+      users.forEach(user => {
+        if (user.rooms.includes(roomId)) {
+            user.ws.send(
               JSON.stringify({
                 userId,
                 roomId,
@@ -99,8 +131,9 @@ if (parsedData.type === "leave_room") {
     }
   });
 
+
   socket.on("close", () => {
     const index = users.findIndex((x) => x.ws === socket);
     if (index !== -1) users.splice(index, 1);
   });
-});
+}); 
