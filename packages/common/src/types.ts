@@ -14,7 +14,6 @@ export const SignupSchema = zod.object({
     .regex(/[^A-Za-z0-9]/, { message: "Password must contain at least one special character" })
 });
 
-
 export const SigninSchema = zod.object({
    username: zod.string()
     .email({ message: "Invalid email address" }),
