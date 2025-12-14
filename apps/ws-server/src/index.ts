@@ -29,7 +29,6 @@ function checkUser(token: string): string | null {
   }
 }
 
-
 wss.on("connection", (socket, request) => {
   const url = request.url;    // what they r trying to connect to eg ws://localhost:3000?token=123123
   if (!url) return socket.close(1008, "Missing URL");
@@ -71,7 +70,7 @@ wss.on("connection", (socket, request) => {
       if (!user) return;
       // send roomId and type = join room
 
-      // check if this slug even exist or not in our database
+      // check if this slug even exist or not in our database slow..
       const r = await client.room.findUnique({
         where: { id: parsedData.roomId },   
         select: { id: true },
@@ -83,7 +82,7 @@ wss.on("connection", (socket, request) => {
         socket.send(JSON.stringify({ type: "error", message: "roomId not found" }));
         return;
       }
-      //includes checks whether the user is already in that room(slug).
+      //includes checks whether the user is already in that roomId.
       //If the room is not in the list, it adds parsedData.roomId to user.rooms
       if (!user.rooms.includes(parsedData.roomId)) {
         user.rooms.push(parsedData.roomId);

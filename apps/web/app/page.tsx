@@ -1,91 +1,132 @@
+// app/page.tsx  (App Router)
 "use client";
 
-import { useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
 
-interface FormData {
-  roomId: string;
-}
-
 export default function Home() {
-  const { register, handleSubmit, formState: { errors } } = useForm<FormData>({
-    mode: "onChange",
-  });
-  
   const router = useRouter();
-
-
-  const onSubmit = (data: FormData) => {
-    router.push(`/room/${data.roomId}`);
-  };
 
   return (
     <div
       style={{
+        minHeight: "100vh",
         display: "flex",
-        justifyContent: "center",
         alignItems: "center",
-        height: "100vh",
-        width: "100vw",
-        background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
-        fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
+        justifyContent: "center",
+        background:
+          "radial-gradient(circle at top left, #4f46e5 0, #020617 45%), radial-gradient(circle at bottom right, #22c55e 0, #020617 55%)",
+        fontFamily:
+          "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+        color: "#e5e7eb",
       }}
     >
-      <form
-        onSubmit={handleSubmit(onSubmit)}
+      <div
         style={{
-          padding: 30,
-          background: "white",
-          borderRadius: 12,
-          boxShadow: "0 8px 24px rgba(0,0,0,0.15)",
-          display: "flex",
-          flexDirection: "column",
-          gap: 20,
-          minWidth: 320,
+          width: "100%",
+          maxWidth: 560,
+          borderRadius: 28,
+          border: "1px dashed rgba(148,163,184,0.7)",
+          backgroundColor: "rgba(15,23,42,0.9)",
+          padding: "2.5rem 2.25rem",
+          boxShadow: "0 32px 80px rgba(15,23,42,0.9)",
         }}
       >
-        <input
-          type="text"
-          placeholder="Enter room slug"
-          {...register("roomId", {
-            required: "Room ID is required",
-            minLength: { value: 3, message: "Minimum 3 characters" },
-            maxLength: { value: 20, message: "Maximum 20 characters" },
-            pattern: {
-              value: /^[a-zA-Z0-9_-]+$/,
-              message: "Only letters, numbers, _ and - allowed",
-            },
-          })}
+        {/* fake window header */}
+        <div
           style={{
-            padding: 12,
-            borderRadius: 8,
-            border: errors.roomId ? "2px solid #e53e3e" : "2px solid #ccc",
-            outline: "none",
-            fontSize: 16,
-          }}
-        />
-        {errors.roomId && (
-          <span style={{ color: "#e53e3e", fontSize: 14 }}>
-            {errors.roomId.message}
-          </span>
-        )}
-        <button
-          type="submit"
-          style={{
-            padding: 12,
-            borderRadius: 8,
-            border: "none",
-            backgroundColor: "#667eea",
-            color: "white",
-            fontWeight: "bold",
-            fontSize: 16,
-            cursor: "pointer",
-            transition: "background-color 0.3s ease",
+            display: "flex",
+            alignItems: "center",
+            gap: 8,
+            marginBottom: "1.75rem",
           }}
         >
-          Enter Room
-        </button>
-      </form>
+          {["#f97316", "#facc15", "#22c55e"].map((c) => (
+            <div
+              key={c}
+              style={{
+                width: 12,
+                height: 12,
+                borderRadius: "999px",
+                background: c,
+              }}
+            />
+          ))}
+          <span
+            style={{
+              marginLeft: "auto",
+              fontSize: 11,
+              textTransform: "uppercase",
+              letterSpacing: 0.08,
+              color: "#9ca3af",
+            }}
+          >
+            Excalidraw Auth
+          </span>
+        </div>
+
+        <h1 style={{ fontSize: "2rem", marginBottom: "0.5rem" }}>
+          Welcome to SketchRooms
+        </h1>
+        <p
+          style={{
+            color: "#9ca3af",
+            marginBottom: "2rem",
+            maxWidth: 420,
+          }}
+        >
+          Spin up collaborative whiteboards in seconds with an Excalidraw‑style
+          experience.
+        </p>
+
+        <div
+          style={{
+            display: "flex",
+            gap: "1rem",
+            flexWrap: "wrap",
+          }}
+        >
+          <button
+            type="button"
+            onClick={() => router.push("/SignUp")}
+            style={{
+              flex: 1,
+              minWidth: 160,
+              padding: "0.9rem 1.4rem",
+              borderRadius: 999,
+              border: "none",
+              cursor: "pointer",
+              fontWeight: 600,
+              fontSize: 15,
+              background:
+                "linear-gradient(135deg, #4f46e5 0%, #22c55e 45%, #38bdf8 100%)",
+              color: "#020617",
+              boxShadow: "0 18px 45px rgba(56,189,248,0.45)",
+            }}
+          >
+            Create a new account
+          </button>
+
+          <button
+            type="button"
+            onClick={() => router.push("/SignIn")}
+            style={{
+              flex: 1,
+              minWidth: 160,
+              padding: "0.9rem 1.4rem",
+              borderRadius: 999,
+              border: "1px dashed #4b5563",
+              cursor: "pointer",
+              fontWeight: 500,
+              fontSize: 15,
+              background:
+                "repeating-linear-gradient(135deg, #020617, #020617 4px, #020819 4px, #020819 8px)",
+              color: "#e5e7eb",
+            }}
+          >
+            I already have an account
+          </button>
+        </div>
+      </div>
     </div>
   );
 }

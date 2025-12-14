@@ -47,7 +47,7 @@ router.post("/signup", async (req, res) => {
 router.post("/signin", async (req, res) => {
   const parsedData = SigninSchema.safeParse(req.body)
   if(!parsedData.success){
-    return res.json({
+    return res.status(400).json({
       msg:"Incorrect input"
     })
   }

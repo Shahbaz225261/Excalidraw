@@ -20,6 +20,8 @@
     "typescript": "5.8.2"
   },
   "dependencies": {
+    "@types/axios": "^0.14.4",
+    "axios": "^1.11.0",
     "react": "^19.1.0",
     "react-dom": "^19.1.0"
   }

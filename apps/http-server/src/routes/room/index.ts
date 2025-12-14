@@ -11,7 +11,7 @@ router.post("/CreateRoom",Middleware,async (req,res)=>{
             msg:"Incorrect inputs"
         })
     }
-    const userId = req.userId
+    const userId = req.userId  // this user need to create the room
     if(userId == undefined){
         return res.status(400).json({
             msg:"invalid admit id"
@@ -35,8 +35,11 @@ router.post("/CreateRoom",Middleware,async (req,res)=>{
     }
 })
 
+// when someone new come to the room then he must be shown old messages first
+// then new messages will come through the websocked layer
+
 router.get("/chats/:roomId",async (req,res)=>{
-  const roomId = Number(req.params.roomId);
+  const roomId = Number(req.params.roomId);  // params m string return hota hai
   const messages = await client.chat.findMany({
     where:{
       roomId:roomId
@@ -51,6 +54,10 @@ router.get("/chats/:roomId",async (req,res)=>{
   })
 })
 
+// people will enter slug(ie room name)
+// but we need room id to join room so we
+// created anotherther endpoint which will give us
+// room id for that given slug
 
 router.get('/:slug',async (req,res)=>{
     const slug = req.params.slug;
@@ -61,7 +68,7 @@ router.get('/:slug',async (req,res)=>{
     })
     if(!room || !room.id){
         return res.json({
-            msg:"room not found with thta slug"
+            msg:"room not found with that slug"
         })
     }
     return res.json({
