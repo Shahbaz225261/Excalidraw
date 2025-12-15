@@ -91,7 +91,10 @@ export function AuthPage({ isSignin }: { isSignin: boolean }) {
             )}
 
             <button
-              type="submit"
+            onClick={()=>{
+                
+            }}
+              type="button"
               className="mt-2 w-full rounded-xl bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground shadow-md hover:shadow-lg"
             >
               {isSignin ? "Sign in" : "Sign up"}
