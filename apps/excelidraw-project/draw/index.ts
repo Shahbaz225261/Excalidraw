@@ -17,16 +17,41 @@ export async function initDraw(canvas:HTMLCanvasElement,roomId:string,socket:Web
             if(!ctx){
                 return;
             }
-            socket.onmessage = (event)=>{
-                const message = JSON.parse(event.data);
+                // WebSocket message handler - FIXED
+    socket.onmessage = (event) => {
+        try {
+            console.log("Raw WebSocket message received:", event.data);
+            const wsMessage = JSON.parse(event.data);
 
-
-                if(message.type == "chat") {
-                    const parsedShape = JSON.parse(message.message)
-                    existingShapes.push(parsedShape.shape);
-                    clearCanvas(ctx,canvas,existingShapes);
+            // Check if this is a chat message with shape data
+            if (wsMessage.type === "chat") {
+                console.log("Chat message received:", wsMessage);
+                
+                try {
+                    // Parse the nested JSON message
+                    const parsedMessage = JSON.parse(wsMessage.message);
+                    
+                    if (parsedMessage && parsedMessage.shape) {
+                        const newShape = parsedMessage.shape;
+                        console.log("New shape extracted:", newShape);
+                        
+                        // Add to existing shapes
+                        existingShapes.push(newShape);
+                        
+                        // Redraw canvas
+                        clearCanvas(ctx, canvas, existingShapes);
+                        console.log("Canvas redrawn. Total shapes:", existingShapes.length);
+                    }
+                } catch (parseError) {
+                    console.error("Failed to parse message.message:", wsMessage.message);
                 }
+            } else {
+                console.log("Received non-chat message:", wsMessage);
             }
+        } catch (error) {
+            console.error("Error processing WebSocket message:", error, event.data);
+        }
+    };
 
 
             clearCanvas(ctx,canvas,existingShapes);
@@ -48,7 +73,7 @@ export async function initDraw(canvas:HTMLCanvasElement,roomId:string,socket:Web
             canvas.addEventListener("mouseup",(e)=>{
                 // when this mouse up happen the i need to broadcast this shape to everyone
                 clicked = false;
-                const width = e.clientX - startX;
+                const width  = e.clientX - startX;
                 const height = e.clientY - startY;
                 const shape:Shape = {
                     type :"rect",
@@ -57,16 +82,20 @@ export async function initDraw(canvas:HTMLCanvasElement,roomId:string,socket:Web
                     height,
                     width
                 }
+                if(!shape){
+                    return;
+                }
                 existingShapes.push(shape)
 
 
-                socket.send(JSON.stringify({
-                    type:"chat",
-                    message : JSON.stringify({
-                        shape
-                    }),
-                    roomId
-                }))
+        const messageToSend = {
+            type: "chat",
+            message: JSON.stringify({ shape }),  // This is what backend expects
+            roomId
+        };
+        
+        console.log("Sending to WebSocket:", JSON.stringify(messageToSend));
+        socket.send(JSON.stringify(messageToSend));
             })
             // it will give position when we move mouse but we want jab ham press krre and move krre then
             // pos show ho naaki only moove krne par hence we use clicked variable which is not a good practice to use
@@ -105,8 +134,7 @@ function clearCanvas(ctx: CanvasRenderingContext2D, canvas: HTMLCanvasElement, e
 async function getExistingShapes(roomId:string){
     const res = await axios.get(`${BACKEND_URL}/room/chats/${roomId}`);
     const messages = res.data.messages;
-
-
+    
     const shapes  = messages.map((x:{message:string}) =>{
         // db return string hence we convert it nto json because we will store json in db. like {type:"rect",x:1,y:3,w:2,h:2}
         const messageData = JSON.parse(x.message)

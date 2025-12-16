@@ -65,7 +65,6 @@ wss.on("connection", (socket, request) => {
       return;
     }
     if (parsedData.type === "joinRoom") {
-      console.log("joinroom recieved");
       const user = users.find((x) => x.ws === socket);
       if (!user) return;
       // send roomId and type = join room
@@ -99,36 +98,37 @@ if (parsedData.type === "leave_room") {
   user.rooms = user.rooms.filter((x) => x !== parsedData.roomId);
 }
 
-  console.log("before join chat");
-  if (parsedData.type === "chat") {
-      console.log("after join chat");
-
+if (parsedData.type === "chat") {
     // type chat,slug and message
-      const roomId = parsedData.roomId;
-      const message = parsedData.message;
+    const roomId = parsedData.roomId;
+    const message = parsedData.message;
 
-     // use queue here
-      await client.chat.create({
-        data:{
-          message,
-          roomId:Number(roomId),
-          userId
+    // use queue here
+    await client.chat.create({
+        data: {
+            message,
+            roomId: Number(roomId),
+            userId
         }
-      })
+    });
 
-      users.forEach(user => {
+    // Broadcast to all users in the room - FIXED FORMAT
+    const broadcastMessage = {
+        type: "chat",  // ADD THIS - frontend expects this
+        userId,
+        roomId,
+        message: message,  // This contains the JSON string with shape
+        timestamp: new Date().toISOString(),
+    };
+
+    console.log("Broadcasting message:", JSON.stringify(broadcastMessage));
+
+    users.forEach(user => {
         if (user.rooms.includes(roomId)) {
-            user.ws.send(
-              JSON.stringify({
-                userId,
-                roomId,
-                message: message,
-                timestamp: new Date().toISOString(),
-              })
-            );
+            user.ws.send(JSON.stringify(broadcastMessage));
         }
-      });
-    }
+    });
+}
   });
 
 
