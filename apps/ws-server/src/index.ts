@@ -64,15 +64,15 @@ wss.on("connection", (socket, request) => {
       socket.send(JSON.stringify({ error: "Invalid JSON" }));
       return;
     }
-
     if (parsedData.type === "joinRoom") {
+      console.log("joinroom recieved");
       const user = users.find((x) => x.ws === socket);
       if (!user) return;
       // send roomId and type = join room
 
       // check if this slug even exist or not in our database slow..
       const r = await client.room.findUnique({
-        where: { id: parsedData.roomId },   
+        where: { id: Number(parsedData.roomId) },   
         select: { id: true },
       }); // returns null if no room [web:43][web:55]
 
@@ -99,8 +99,9 @@ if (parsedData.type === "leave_room") {
   user.rooms = user.rooms.filter((x) => x !== parsedData.roomId);
 }
 
-
-    if (parsedData.type === "chat") {
+  console.log("before join chat");
+  if (parsedData.type === "chat") {
+      console.log("after join chat");
 
     // type chat,slug and message
       const roomId = parsedData.roomId;
@@ -110,7 +111,7 @@ if (parsedData.type === "leave_room") {
       await client.chat.create({
         data:{
           message,
-          roomId,
+          roomId:Number(roomId),
           userId
         }
       })
