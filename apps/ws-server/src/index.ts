@@ -98,37 +98,34 @@ if (parsedData.type === "leave_room") {
   user.rooms = user.rooms.filter((x) => x !== parsedData.roomId);
 }
 
-if (parsedData.type === "chat") {
+  if (parsedData.type === "chat") {
     // type chat,slug and message
-    const roomId = parsedData.roomId;
-    const message = parsedData.message;
+      const roomId = parsedData.roomId;
+      const message = parsedData.message;
 
-    // use queue here
-    await client.chat.create({
-        data: {
-            message,
-            roomId: Number(roomId),
-            userId
+     // use queue here
+      await client.chat.create({
+        data:{
+          message,
+          roomId:Number(roomId),
+          userId
         }
-    });
+      })
 
-    // Broadcast to all users in the room - FIXED FORMAT
-    const broadcastMessage = {
-        type: "chat",  // ADD THIS - frontend expects this
-        userId,
-        roomId,
-        message: message,  // This contains the JSON string with shape
-        timestamp: new Date().toISOString(),
-    };
-
-    console.log("Broadcasting message:", JSON.stringify(broadcastMessage));
-
-    users.forEach(user => {
+      users.forEach(user => {
         if (user.rooms.includes(roomId)) {
-            user.ws.send(JSON.stringify(broadcastMessage));
+            user.ws.send(
+              JSON.stringify({
+                type:"chat",
+                userId,
+                roomId,
+                message: message,
+                timestamp: new Date().toISOString(),
+              })
+            );
         }
-    });
-}
+      });
+    }
   });
 
 
