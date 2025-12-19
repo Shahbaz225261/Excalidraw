@@ -1,6 +1,15 @@
 "use client"
 import { initDraw } from "@/draw";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
+import { Circle, Pencil, RectangleHorizontalIcon } from "lucide-react";
+import { IconButton } from "./IconButton";
+
+// Define enum for shapes
+enum Shape {
+    CIRCLE = "circle",
+    PENCIL = "pencil", 
+    RECT = "rect"
+}
 
 export function Canvas({
     roomId,
@@ -9,21 +18,55 @@ export function Canvas({
     socket: WebSocket,
     roomId:string
 }){
-     const canvasRef = useRef<HTMLCanvasElement>(null);
-        useEffect(()=>{
-        // when it renders first time then its value will be null 
-        // to tab ye logic ni run hona chaiye (only phli baar)
-        // then canvasRef have value of canvas then again this will mount and run the logic
+    const canvasRef = useRef<HTMLCanvasElement>(null);
+    const [selectedTool, setSelectedTool] = useState<Shape>(Shape.CIRCLE);
+    
+    useEffect(()=>{
         if(canvasRef.current){
-            // storing canvas reference into canvas variable
             const canvas = canvasRef.current;
-            initDraw(canvasRef.current,roomId,socket);
+            initDraw(canvasRef.current, roomId, socket);
         }
-
     },[canvasRef])
 
-    return <div>
-         <canvas ref = {canvasRef} width="2000" height="900"></canvas>
+    return <div style={{
+        height: "100vh",
+        overflow: "hidden"
+    }}>
+        <canvas ref={canvasRef} width={window.innerWidth} height={window.innerHeight}></canvas>
+        <Topbar selectedTool={selectedTool} setSelectedTool={setSelectedTool} />
     </div>
-    
+}
+
+export function Topbar({
+    selectedTool,
+    setSelectedTool
+}:{
+    selectedTool: Shape,
+    setSelectedTool: (s: Shape) => void
+}) {
+    return (
+        <div className="fixed top-2 left-2 flex gap-2">
+            <IconButton
+                Activated={selectedTool === Shape.PENCIL}
+                icon={<Pencil />} 
+                onClick={() => {
+                    setSelectedTool(Shape.PENCIL);
+                }} 
+            />
+            <IconButton 
+                Activated={selectedTool === Shape.RECT}
+                icon={<RectangleHorizontalIcon />} 
+                onClick={() => {
+                    setSelectedTool(Shape.RECT);
+                }} 
+            />
+            <IconButton 
+                Activated={selectedTool === Shape.CIRCLE}
+                icon={<Circle />} 
+                onClick={() => {
+                    setSelectedTool(Shape.CIRCLE);
+                }} 
+            />
+        </div>
+    )
 }

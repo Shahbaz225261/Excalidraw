@@ -19,8 +19,6 @@ export async function initDraw(canvas:HTMLCanvasElement,roomId:string,socket:Web
             }
             socket.onmessage = (event)=>{
                 const message = JSON.parse(event.data);
-
-
                 if(message.type == "chat") {
                     const parsedShape = JSON.parse(message.message)
                     existingShapes.push(parsedShape.shape);
