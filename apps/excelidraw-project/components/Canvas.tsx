@@ -8,7 +8,7 @@ import { IconButton } from "./IconButton";
 enum Shape {
     CIRCLE = "circle",
     PENCIL = "pencil", 
-    RECT = "rect"
+    RECT   = "rect"
 }
 
 export function Canvas({
@@ -20,6 +20,15 @@ export function Canvas({
 }){
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const [selectedTool, setSelectedTool] = useState<Shape>(Shape.CIRCLE);
+
+    useEffect(()=>{
+        if(canvasRef.current){
+            //@ts-ignore
+            window.selectedTool = selectedTool;
+        }
+
+    },[selectedTool]);
+
     
     useEffect(()=>{
         if(canvasRef.current){

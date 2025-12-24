@@ -1,11 +1,23 @@
 import axios from "axios";
 import { BACKEND_URL } from "@/config";
+import { Button } from "@repo/ui/button";
 type Shape = {
     type: "rect";
     x: number;
     y: number;
     width: number;
     height: number;
+} |{
+    type:"circle";
+    centerX:number;
+    centerY:number;
+    radius : number;
+}|{
+    type:"pencil";
+    startX:number;
+    startY:number;
+    endX:number;
+    endY:number;
 };
 
 
@@ -17,6 +29,8 @@ export async function initDraw(canvas:HTMLCanvasElement,roomId:string,socket:Web
             if(!ctx){
                 return;
             }
+
+            // when server respond's then we have to render again the shape
             socket.onmessage = (event)=>{
                 const message = JSON.parse(event.data);
                 if(message.type == "chat") {
@@ -25,8 +39,6 @@ export async function initDraw(canvas:HTMLCanvasElement,roomId:string,socket:Web
                     clearCanvas(ctx,canvas,existingShapes);
                 }
             }
-
-
             clearCanvas(ctx,canvas,existingShapes);
             let clicked = false;
             let startX =0;
@@ -44,23 +56,44 @@ export async function initDraw(canvas:HTMLCanvasElement,roomId:string,socket:Web
                 startY = e.clientY;
             })
             canvas.addEventListener("mouseup",(e)=>{
-                // when this mouse up happen the i need to broadcast this shape to everyone
+                // when this mouse up happen then i need to broadcast this shape to everyone
                 clicked = false;
                 const width  = e.clientX - startX;
                 const height = e.clientY - startY;
-                const shape:Shape = {
-                    type :"rect",
-                    x:startX,
-                    y:startY,
-                    height,
-                    width
+                //@ts-ignore
+                const selectedTool = window.selectedTool;
+                // initialized shape to null
+                let shape : Shape | null = null;
+                if(selectedTool == "rect"){
+                    shape = {
+                        //@ts-ignore
+                        type : "rect",
+                        x:startX,
+                        y:startY,
+                        height,
+                        width
+                    }
+                    if(!shape){
+                        return;
+                    }
+                }
+                else if(selectedTool == "circle"){
+                    const radius = Math.max(width,height) / 2;
+                    shape = {
+                        //@ts-ignore
+                        type : "circle",
+                        radius: radius,
+                        centerX:startX + radius,
+                        centerY:startY + radius,
+                    }
+                    if(!shape){
+                        return;
+                    }
                 }
                 if(!shape){
                     return;
                 }
                 existingShapes.push(shape)
-
-
                 socket.send(JSON.stringify({
                     type:"chat",
                     message : JSON.stringify({
@@ -78,10 +111,24 @@ export async function initDraw(canvas:HTMLCanvasElement,roomId:string,socket:Web
                     const height = e.clientY - startY;
                     clearCanvas(ctx,canvas,existingShapes);
                     // jab ham new shape banaenge then ham clear krenge everything and also rerendered everything again
-                    // other than the shape u r  i m also rendering the existing shapes . and when mous eis up then s shape will
+                    // other than the shape u r  i m also rendering the existing shapes . and when mouse is up then s shape will
                     // also stored into the shapes variable
                     ctx.strokeStyle = "rgba(255,255,255)";
-                    ctx.strokeRect(startX,startY,width,height);
+                    //@ts-ignore
+                    const selectedTool = window.selectedTool;
+
+                    if(selectedTool == "rect"){
+                        ctx.strokeRect(startX,startY,width,height);
+                    }
+                    if(selectedTool == "circle"){
+                        const radius  = Math.max(width,height)/2;
+                        const centerX = startX + radius;
+                        const centerY = startY + radius;
+                        ctx.beginPath();
+                        ctx.arc(centerX,centerY,radius,0,Math.PI * 2);
+                        ctx.stroke();
+                        ctx.closePath();
+                    }
                 }
             })
 }
@@ -98,6 +145,12 @@ function clearCanvas(ctx: CanvasRenderingContext2D, canvas: HTMLCanvasElement, e
             ctx.strokeStyle = "rgba(255,255,255)";
             ctx.strokeRect(shape.x, shape.y, shape.width, shape.height);
         }
+        else if(shape.type === "circle"){
+            ctx.beginPath();
+            ctx.arc(shape.centerX,shape.centerY,shape.radius,0,Math.PI * 2)
+            ctx.stroke();
+            ctx.closePath();
+        }
     });
 }
 
@@ -106,7 +159,6 @@ function clearCanvas(ctx: CanvasRenderingContext2D, canvas: HTMLCanvasElement, e
 async function getExistingShapes(roomId:string){
     const res = await axios.get(`${BACKEND_URL}/room/chats/${roomId}`);
     const messages = res.data.messages;
-
 
     const shapes  = messages.map((x:{message:string}) =>{
         // db return string hence we convert it nto json because we will store json in db. like {type:"rect",x:1,y:3,w:2,h:2}
