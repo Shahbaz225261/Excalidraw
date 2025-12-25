@@ -15,7 +15,7 @@ function App() {
                 Ex
               </div>
               <span className="font-semibold text-sm sm:text-base">
-                Excalidraw Clone
+                Excalidraw
               </span>
             </Link>
 

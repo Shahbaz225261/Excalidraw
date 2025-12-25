@@ -1,3 +1,18 @@
+## Screenshots
+
+### Dashboard
+![Dashboard](assets/Dashboard.png)
+
+### Room creation
+![Create room page](assets/CreateRoomPage.png)
+
+### Canvas
+![Canvas](assets/Canvas.png)
+
+### Sign up / Sign in
+![Signup page](assets/SignupPage.png)
+![Signin page](assets/SigninPage.png)
+
 # Turborepo starter
 
 This Turborepo starter is maintained by the Turborepo core team.

@@ -29,7 +29,7 @@ export default function RoomPage() {
     try {
       // Get room ID from slug
       const response = await axios.get(`${BACKEND_URL}/room/${slug}`);
-      
+
       if (response.data.roomId) {
         setSuccess(`Found room! Redirecting...`);
         setTimeout(() => {
@@ -78,7 +78,7 @@ export default function RoomPage() {
       if (response.data.roomId) {
         setSuccess(`Room "${roomName}" created successfully! Redirecting...`);
         setTimeout(() => {
-          router.push(`/room/${response.data.roomId}`);
+          router.push(`/canvas/${response.data.roomId}`);
         }, 1500);
       }
     } catch (err: any) {
@@ -97,10 +97,8 @@ export default function RoomPage() {
 
   return (
     <div className="min-h-screen bg-background text-foreground flex flex-col">
-      {/* Header */}
-      <header className="w-full border-b border-border bg-card">
+       <header className="w-full border-b border-border bg-card">
         <div className="px-6 py-3 flex items-center justify-between">
-          {/* Logo */}
           <Link href="/" className="flex items-center gap-2">
             <div className="h-8 w-8 rounded-2xl bg-primary flex items-center justify-center text-primary-foreground text-sm font-bold">
               Ex
@@ -110,7 +108,6 @@ export default function RoomPage() {
             </span>
           </Link>
 
-          {/* User Menu/Actions */}
           <div className="flex items-center gap-3">
             <button
               onClick={() => router.push("/signin")}
@@ -128,10 +125,8 @@ export default function RoomPage() {
         </div>
       </header>
 
-      {/* Main Content */}
       <main className="flex-1">
         <div className="container mx-auto px-4 py-8 md:py-12">
-          {/* Hero Section */}
           <div className="text-center mb-12">
             <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4">
               Collaborative Whiteboarding Made Simple
@@ -141,10 +136,8 @@ export default function RoomPage() {
             </p>
           </div>
 
-          {/* Room Actions Section */}
           <div className="max-w-4xl mx-auto">
             <div className="grid md:grid-cols-2 gap-8">
-              {/* Join Room Card */}
               <div className="rounded-3xl bg-card border border-border p-8">
                 <div className="text-center mb-6">
                   <div className="h-12 w-12 rounded-2xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center mx-auto mb-4">
@@ -197,7 +190,6 @@ export default function RoomPage() {
                 </form>
               </div>
 
-              {/* Create Room Card */}
               <div className="rounded-3xl bg-card border border-border p-8">
                 <div className="text-center mb-6">
                   <div className="h-12 w-12 rounded-2xl bg-green-500/10 border border-green-500/20 flex items-center justify-center mx-auto mb-4">
