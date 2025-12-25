@@ -90,12 +90,12 @@ export class Game{
         });
     }
 
-    mouseDownHandler = (e)=>{
+    mouseDownHandler = (e:MouseEvent)=>{
         this.clicked = true;
         this.startX = e.clientX;
         this.startY = e.clientY;
     }
-    mouseUpHandler = (e) =>{
+    mouseUpHandler = (e:MouseEvent) =>{
         // when this mouse up happen then i need to broadcast this shape to everyone
         this.clicked = false;
         const width  = e.clientX - this.startX;
@@ -143,7 +143,7 @@ export class Game{
         }))
 
     }
-    mouseMoveHandler =(e) =>{
+    mouseMoveHandler =(e:MouseEvent) =>{
         if(this.clicked){
         //coordinates are viewport-based, not canvas-based, so you must convert them.
         const width  = e.clientX - this.startX;
