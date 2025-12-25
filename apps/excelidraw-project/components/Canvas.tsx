@@ -1,12 +1,12 @@
 "use client"
 import { initDraw } from "@/draw";
 import { useEffect, useRef, useState } from "react";
-import { Circle, Pencil, RectangleHorizontalIcon } from "lucide-react";
+import { Circle, Pencil, RectangleHorizontalIcon, Slash } from "lucide-react";
 import { IconButton } from "./IconButton";
 import { Game } from "@/draw/Game";
 
 // Define enum for Tools
-export type Tool  = "circle" | "rect" | "pencil" ;
+export type Tool  = "circle" | "rect" | "pencil" | "line";
 
 export function Canvas({
     roomId,
@@ -25,7 +25,6 @@ export function Canvas({
         }
 
     },[selectedTool,game]);
-
     
     useEffect(()=>{
         if(canvasRef.current){
@@ -57,7 +56,7 @@ export function Topbar({
     setSelectedTool: (s: Tool) => void
 }) {
     return (
-        <div className="fixed top-2 left-2 flex gap-2">
+        <div className="fixed top-2 left-2 flex  gap-2">
             <IconButton
                 Activated={selectedTool === "pencil"}
                 icon={<Pencil />} 
@@ -78,6 +77,13 @@ export function Topbar({
                 onClick={() => {
                     setSelectedTool("circle");
                 }} 
+            />
+            <IconButton
+                Activated={selectedTool === "line"}
+                icon = { <Slash/>}
+                onClick={()=>{
+                    setSelectedTool("line");
+                }}
             />
         </div>
     )

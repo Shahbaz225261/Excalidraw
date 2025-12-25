@@ -2,12 +2,27 @@
 import { WS_URL } from "@/config";
 import { useEffect,useRef, useState } from "react";
 import { Canvas } from "./Canvas";
+import { useRouter } from "next/navigation";
+
 
 export function RoomCanvas({roomId}:{roomId:string}){
     const [socket,setSocket] = useState<WebSocket | null>(null);
-    useEffect(()=>{
+    const router = useRouter();
+
+     useEffect(()=>{
+        // Get token from localStorage
+        const token = localStorage.getItem("token");
+        
+        if (!token) {
+            console.error("No token found in localStorage. Redirecting to signin...");
+            // Redirect to signin page after a delay
+            setTimeout(() => {
+                router.push("/signin");
+            }, 2000);
+            return;
+        }
         // after u signed in this toekn should come from local storage for now we r just hardcoding this
-        const ws = new WebSocket(`${WS_URL}?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJhOGEzZDQwZS03Njc0LTRhNjYtOTQ2OC03MTgzNzhjZTYyZDMiLCJpYXQiOjE3NjU4Njk3Njl9.EEcg2mfhctdXTJWSf7SXpZDQ2kEE5VgGRVz0OzjA0zA`);
+        const ws = new WebSocket(`${WS_URL}?token=${token}`);
             
         ws.onopen = () => {
             setSocket(ws);
