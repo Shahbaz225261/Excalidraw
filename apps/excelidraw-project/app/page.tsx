@@ -6,37 +6,36 @@ import Link from "next/link";
 function App() {
   return (
     <div className="min-h-screen bg-background">
-      {/* /* hamburger */ }
+      {/* Hamburger */}
       <header className="w-full border-b border-border bg-card">
-          <div className="px-6 py-3 flex items-center justify-between">
-            {/* left: logo + text */}
-            <Link href="/" className="flex items-center gap-2">
-              <div className="h-8 w-8 rounded-2xl bg-primary flex items-center justify-center text-primary-foreground text-sm font-bold">
-                Ex
-              </div>
-              <span className="font-semibold text-sm sm:text-base">
-                Excalidraw
-              </span>
-            </Link>
+        <div className="px-6 py-3 flex items-center justify-between">
+          {/* left: logo + text */}
+          <Link href="/" className="flex items-center gap-2">
+            <div className="h-8 w-8 rounded-2xl bg-primary flex items-center justify-center text-primary-foreground text-sm font-bold">
+              Ex
+            </div>
+            <span className="font-semibold text-sm sm:text-base">
+              Excalidraw
+            </span>
+          </Link>
 
-            {/* right: hamburger */}
-            <button
-              type="button"
-              className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-border hover:bg-muted"
-            >
-              <span className="sr-only">Open menu</span>
-              <div className="space-y-1.5">
-                <span className="block h-0.5 w-4 bg-foreground" />
-                <span className="block h-0.5 w-4 bg-foreground" />
-                <span className="block h-0.5 w-4 bg-foreground" />
-              </div>
-            </button>
-          </div>
+          {/* right: hamburger */}
+          <button
+            type="button"
+            className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-border hover:bg-muted"
+          >
+            <span className="sr-only">Open menu</span>
+            <div className="space-y-1.5">
+              <span className="block h-0.5 w-4 bg-foreground" />
+              <span className="block h-0.5 w-4 bg-foreground" />
+              <span className="block h-0.5 w-4 bg-foreground" />
+            </div>
+          </button>
+        </div>
       </header>
 
-      
       {/* Hero Section */}
-      <header className="relative overflow-hidden">
+      <section className="relative overflow-hidden">
         <div className="container mx-auto px-4 py-16 sm:px-6 lg:px-8">
           <div className="text-center">
             <h1 className="text-4xl font-bold tracking-tight sm:text-6xl text-foreground">
@@ -51,7 +50,7 @@ function App() {
               <div className="flex justify-center">
                 <Link href="/signin">
                   <Button variant="primary" size="lg" className="h-12 px-6 rounded-2xl ">
-                    <span  className="flex items-center">
+                    <span className="flex items-center">
                       Sign in
                       <Pencil className="ml-2 h-4 w-4" />
                     </span>
@@ -67,7 +66,7 @@ function App() {
             </div>
           </div>
         </div>
-      </header>
+      </section>
 
       {/* Features Section */}
       <section className="py-24 bg-muted/50">
@@ -80,9 +79,10 @@ function App() {
                 </div>
                 <h3 className="text-xl font-semibold">Real-time Collaboration</h3>
               </div>
-              <p className="mt-4 text-muted-foreground">
+              {/* Changed from <p> to <div> to avoid nesting issues */}
+              <div className="mt-4 text-muted-foreground">
                 Work together with your team in real-time. Share your drawings instantly with a simple link.
-              </p>
+              </div>
             </Card>
 
             <Card className="p-6 border-2 hover:border-primary transition-colors">
@@ -92,9 +92,10 @@ function App() {
                 </div>
                 <h3 className="text-xl font-semibold">Multiplayer Editing</h3>
               </div>
-              <p className="mt-4 text-muted-foreground">
+              {/* Changed from <p> to <div> */}
+              <div className="mt-4 text-muted-foreground">
                 Multiple users can edit the same canvas simultaneously. See who's drawing what in real-time.
-              </p>
+              </div>
             </Card>
 
             <Card className="p-6 border-2 hover:border-primary transition-colors">
@@ -104,9 +105,10 @@ function App() {
                 </div>
                 <h3 className="text-xl font-semibold">Smart Drawing</h3>
               </div>
-              <p className="mt-4 text-muted-foreground">
+              {/* Changed from <p> to <div> */}
+              <div className="mt-4 text-muted-foreground">
                 Intelligent shape recognition and drawing assistance helps you create perfect diagrams.
-              </p>
+              </div>
             </Card>
           </div>
         </div>
